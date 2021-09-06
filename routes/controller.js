@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { dbConnection } = require('../src/connection/db')
+const { dbConnection } = require('../src/database/mongo')
 /**
  * Home page: loading all product
  */
