@@ -5,7 +5,6 @@ require('dotenv').config({
 })
 
 const MONGODB_FULL_URI = process.env.MONGODB_FULL_URI
-const DATABASE_NAME = process.env.MONGODB_NAME
 
 const dbConnection = () => {
     let _content = null
