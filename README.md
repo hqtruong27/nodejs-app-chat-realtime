@@ -13,3 +13,5 @@
   2. nodemon
   3. socket.io
   4. mongoose
+  5. jsonwebtoken
+  6. bcrypt
