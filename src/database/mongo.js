@@ -4,14 +4,14 @@ require('dotenv').config({
     path: path.resolve(__dirname, '../../environment/development.env')
 })
 
-const MONGODB_FULL_URI = process.env.PORT
+const dbURI = process.env.MONGODB_FULL_URI
 
 const dbConnection = () => {
     let _content = null
     let instance = 0
     const dbContext = async () => {
         try {
-            let mongoClient = await MongoClient.connect(MONGODB_FULL_URI)
+            let mongoClient = await MongoClient.connect(dbURI)
             return mongoClient.db()
 
         } catch (error) {
