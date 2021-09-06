@@ -12,3 +12,4 @@
   1. express
   2. nodemon
   3. socket.io
+  4. mongoose
