@@ -14,14 +14,16 @@ const io = new Server(server)
 require('./src/database/mongoose')
 
 //routes controller
-//const routes = require('./routes/controller')
+const authRoute = require('./routes/authentication')
 
 app.use(express.static(__dirname + '/src/'))
 app.use('/helper', express.static(__dirname + '/src/'))
 app.use(express.json())
 
 //setup routes
-//app.use('/home/', routes)
+app.use('/api/authentication', authRoute)
+
+//
 app.get('/', (req, res) => {
     res.sendFile(__dirname + `index.html`);
 });
