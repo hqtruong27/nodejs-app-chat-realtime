@@ -15,6 +15,7 @@ require('./src/database/mongoose')
 
 //routes controller
 const authRoute = require('./routes/authentication')
+const personalRoute = require('./routes/personal')
 
 app.use(express.static(__dirname + '/src/'))
 app.use('/helper', express.static(__dirname + '/src/'))
@@ -22,11 +23,12 @@ app.use(express.json())
 
 //setup routes
 app.use('/api/authentication', authRoute)
+app.use('/api/personal', personalRoute)
 
 //
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + `index.html`);
-});
+    res.sendFile(__dirname + `index.html`)
+})
 
 // catch 404 and forward to error handler
 //.........
@@ -38,14 +40,9 @@ app.get('/', (req, res) => {
 //.........
 //.........
 
-
+//socket
 io.on('connection', async (socket) => {
     console.log('connected')
-    // const data = { id: 1, name: 'Truong Hoang' }
-    // let _context = await dbConnection.dbConnection()
-
-    // let result = await _context.collection('Chat').insertOne(data)
-    // console.log(result)
 
     socket.on('on-chat', data => {
         console.log({ data })
@@ -54,5 +51,5 @@ io.on('connection', async (socket) => {
     })
 })
 
-server.listen(PORT, HOST, () => console.log(`listening on ${HOST}:${PORT}`));
+server.listen(PORT, HOST, () => console.log(`listening on ${HOST}:${PORT}`))
 
