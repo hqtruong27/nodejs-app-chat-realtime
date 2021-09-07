@@ -1,4 +1,4 @@
-import { getHash } from '.././helper/helper.js';
+//import { getHash } from '.././helper/helper.js';
 const socket = io()
 const chatForm = document.querySelector('#chat-form')
 const chatMessage = document.querySelector('.chat-message')
@@ -14,19 +14,22 @@ const ChatClient = {
         ChatClient.event()
     },
     user: async () => {
-        const response = await axios.get('http://localhost:3000/api/personal', {
-            headers: {
-                Authorization: 'Bearer ' + ACCESS_TOKEN
+        try {
+            const response = await fetch('http://localhost:3000/api/personal', {
+                method: 'GET',
+                headers: {
+                    Authorization: 'Bearer ' + ACCESS_TOKEN
+                }
+            })
+
+            if (response.ok) {
+                return User = response.data
             }
-        })
 
-        console.log(response)
-
-        if (response.status === 200) {
-            return User = response.data
+            window.location.href = 'https://google.com'
+        } catch (error) {
+            console.log(error)
         }
-
-        return window.location.href = 'https://google.com'
     },
 
     socket: () => {

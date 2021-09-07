@@ -9,7 +9,7 @@ const verify = (req, res, next) => {
 
     jwt.verify(token.split(' ')[1], SECRET_KEY, (err, value) => {
         if (err) {
-            return res.status(500).json({ status: 500, message: 'failed to verify token' });
+            return res.status(400).json({ status: 500, message: 'failed to verify token' });
         }
 
         req.user = value.data;
