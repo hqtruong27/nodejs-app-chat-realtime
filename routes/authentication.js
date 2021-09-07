@@ -17,7 +17,8 @@ router.get('/login', async (req, res) => {
         if (user != null) {
             if (await bcrypt.compare(req.body.password, user.password)) {
                 const token = generateToken(user)
-                return res.status(200).json({ token: token, expiresIn: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) })
+
+                return res.status(200).json({ token: token, expiresIn: new Date(Date.now() + 24 * 3600 * 1000) })
             }
 
             return res.status(401).json({
