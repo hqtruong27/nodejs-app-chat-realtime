@@ -61,7 +61,7 @@ router.post('/signup', async (req, res) => {
 
 const generateToken = (user) => jwt.sign({ data: user }, SECRET_KEY, { expiresIn: '24h' })
 
-router.get('/user', async (req, res, next) => {
+router.get('/user', middleware.verify, async (req, res, next) => {
     const users = await User.find()
     if (users.length > 0) {
         return res.status(200).json(users)
