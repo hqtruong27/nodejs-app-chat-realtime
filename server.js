@@ -3,7 +3,7 @@ const app = express()
 require('dotenv').config()
 const HOST = process.env.HOST || '127.0.0.1'
 const PORT = process.env.PORT || 3000
-const SECRET_KEY = process.env.SECRET_KEY || 'my secret key'
+
 //socket
 const server = require('http').createServer(app)
 const { Server } = require('socket.io')
