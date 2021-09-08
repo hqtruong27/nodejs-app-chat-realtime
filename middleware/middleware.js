@@ -17,4 +17,26 @@ const verify = (req, res, next) => {
     })
 }
 
-module.exports = { verify }
+const authorize = (socket, next) => {
+    const token = socket.handshake?.auth?.token
+    if (token) {
+        jwt.verify(token, SECRET_KEY, (err, decoded) => {
+            if (err) {
+                const error = new Error(err.message);
+                error.data = { code: '401', message: "Authentication failed" }
+                //socket.disconnect()
+                return next(error)
+            }
+
+            socket.decoded = decoded
+            next()
+        })
+    }
+    else {
+        //socket.disconnect()
+        next(new Error({ code: '401', message: "invalid token" }));
+    }
+
+}
+
+module.exports = { verify, authorize }
