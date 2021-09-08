@@ -3,8 +3,9 @@ const chatForm = document.querySelector('#chat-form')
 const chatMessage = document.querySelector('.chat-message')
 const sendMessage = document.querySelector('.send-message')
 const typing = document.querySelector('#chat-sending')
+const baseUri = location.origin
+const ACCESS_TOKEN = localStorage.getItem('user')
 
-const ACCESS_TOKEN = localStorage.getItem('users') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjYxMzY0MmNiNWRhNTRjMzFkNDczNTBmMSIsIm5hbWUiOiJ0cnVvbmdocSIsInBhc3N3b3JkIjoiJDJiJDA5JFVrdi9EZXdNeEhvRFEwbU51U0U4YWVJL1BtT2ZabEVSNFR2bFczd0RRcVBsa3g2a0VJMWVlIiwiX192IjowfSwiaWF0IjoxNjMxMDM3MjYyLCJleHAiOjE2MzExMjM2NjJ9.GsX_otGeccB_GhEYPOhAZ_cmgurhop4Le1S3zmJlJhE'
 const ChatClient = {
     init: () => {
         ChatClient.connect()
@@ -22,6 +23,7 @@ const ChatClient = {
             console.log(err.data);
             console.log(err.message);
             socket.disconnect()
+            location.href = baseUri + '/login.html'
         });
 
         ChatClient.socket(socket)
