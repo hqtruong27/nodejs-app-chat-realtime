@@ -127,6 +127,12 @@
                             </div>
                         </div>
                     </div>
+
+                </div>
+                <div class="chat-msg owner" style="text-align:right;">
+                    <div class="chat-msg-profile">
+                        <div id="chat-sending" class="chat-msg-date"></div>
+                    </div>
                 </div>
                 <div class="chat-area-footer">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -295,7 +301,7 @@
     const element = (e) => document.querySelector(e); element()
 
     async function getGroups() {
-        const result = await axios.get('http://localhost:3000/home/group?userId=613595dedaa1681a4456b677')
+        const result = await axios.get('http://localhost:3000/api/group?userId=613642cb5da54c31d47350f1')
         let html = ``
         for (const group of await result.data) {
             html += `<div class="msg active" id="${group._id}">
