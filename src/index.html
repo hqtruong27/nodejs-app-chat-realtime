@@ -330,7 +330,6 @@
         node.innerHTML = html
         wrapper.appendChild(node, wrapper.firstChild)
     }
-    getGroups()
 
     function handlerClick() {
         const chatArea = document.querySelector('.chat-area-main')
@@ -373,7 +372,7 @@
     handlerClick()
 
     async function getChats(entityId) {
-        const response = await axios.get(`http://localhost:3000/home/chat?groupId=${entityId}`)
+        const response = await axios.get(`/home/chat?groupId=${entityId}`)
         return response
     }
 </script>

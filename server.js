@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 
 //socket
 io.use(authorize).on('connection', (socket) => {
-    console.log('connected', socket.decoded.data)
+    console.log('connected')
 
     socket.emit('user-info', { user: socket.decoded.data })
     socket.on("join-room", (data) => {
@@ -51,13 +51,11 @@ io.use(authorize).on('connection', (socket) => {
     })
 
     socket.on('typing', (req) => {
-        console.log(req);
         socket.broadcast.emit('typing', req)
     })
 
     socket.on('on-chat', (req) => {
         const data = { user: req.user, message_sender: socket.id, message: req.message }
-        console.log(data)
         io.to('room1').emit('user-chat', data);
 
     });

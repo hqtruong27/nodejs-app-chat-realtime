@@ -1,6 +1,5 @@
 'use-strict'
 
-const baseUri = location.origin
 const wrapper = document.querySelector('.wrapper')
 const ACCESS_TOKEN = localStorage.getItem('user')
 
@@ -16,9 +15,9 @@ const Login = {
             form.addEventListener('submit', (e) => {
                 e.preventDefault()
                 const requestBody = { name: username.value, password: password.value }
-                axios.post('http://localhost:3000/api/auth/login', requestBody).then(result => {
+                axios.post('/api/auth/login', requestBody).then(result => {
                     localStorage.setItem('user', result.data.token)
-                    location.replace(baseUri)
+                    location.replace('/')
                 }).catch(err => {
                     document.querySelectorAll('.form__error').forEach((x) => x.remove())
                     const node = document.createElement('div')
@@ -30,11 +29,11 @@ const Login = {
         }
     },
     checkToken: () => {
-        axios.get(baseUri + '/api/auth/checkToken', {
+        axios.get('/api/auth/checkToken', {
             headers: { Authorization: 'Bearer ' + ACCESS_TOKEN }
         }).then((response) => {
             if (response.status === 200)
-                location.replace(baseUri)
+                location.replace('/')
         })
     }
 }

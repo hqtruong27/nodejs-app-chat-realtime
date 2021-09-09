@@ -3,17 +3,16 @@ const chatForm = document.querySelector('#chat-form')
 const chatMessage = document.querySelector('.chat-message')
 const sendMessage = document.querySelector('.send-message')
 const typing = document.querySelector('#chat-sending')
-const baseUri = location.origin
 const ACCESS_TOKEN = localStorage.getItem('user')
 
 const ChatClient = {
     init: () => {
         ChatClient.connect()
+        ChatClient.user()
     },
     connect: () => {
         let socket = io({ auth: { token: ACCESS_TOKEN } })
         socket.on('user-info', (res) => {
-            console.log(res)
             socket.user = res.user
             socket.emit("join-room", { user: res.user, roomName: "room1" })
         })
@@ -23,7 +22,7 @@ const ChatClient = {
             console.log(err.data);
             console.log(err.message);
             socket.disconnect()
-            location.href = baseUri + '/login.html'
+            location.href = '/login.html'
         });
 
         ChatClient.socket(socket)
@@ -31,18 +30,20 @@ const ChatClient = {
     },
     user: async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/personal', {
+            const response = await fetch('/api/personal', {
                 method: 'GET',
                 headers: {
                     Authorization: 'Bearer ' + ACCESS_TOKEN
                 }
             })
 
-            if (response.ok) {
-                return User = await response.json()
+            if (!response.ok) {
+                window.location.href = '/login.html'
             }
 
-            window.location.href = 'https://google.com'
+            const user = await response.json()
+            console.log(user)
+            ChatClient.getGroups(user)
         } catch (error) {
             console.log(error)
         }
@@ -105,18 +106,47 @@ const ChatClient = {
             typing.textContent = data
         })
 
-        let isTyping = false;
-        let timeout = undefined;
+        let timeout;
         const onInput = (user) => {
             clearTimeout(timeout);
             socket.emit('typing', `${user.name} is typing...`);
             timeout = setTimeout(typingTimeout, 3000);
         }
         const typingTimeout = () => {
-            isTyping = false;
             socket.emit('typing');
         };
 
+    },
+
+    getGroups: async (user) => {
+        const result = await axios.get(`/api/group?userId=${user._id}`)
+        let html = ``
+        for (const group of await result.data) {
+            html += `<div class="msg active" id="${group._id}">
+                        <div class="msg-profile group">
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
+                                <path d="M12 2l10 6.5v7L12 22 2 15.5v-7L12 2zM12 22v-6.5" />
+                                <path d="M22 8.5l-10 7-10-7" />
+                                <path d="M2 15.5l10-7 10 7M12 2v6.5" />
+                            </svg>
+                        </div>
+                        <div class="msg-detail">
+                            <div class="msg-username">${group.name}</div>
+                            <div class="msg-content">
+                                <span class="msg-message">Truonghq: Nodejs is fun!!</span>
+                                <span class="msg-date">28m</span>
+                            </div>
+                        </div>
+                    </div>`
+        }
+
+        console.log(result.data);
+
+        const wrapper = document.querySelector('.conversation-area')
+        const node = document.createElement('div')
+        node.innerHTML = html
+        wrapper.appendChild(node, wrapper.firstChild)
     },
 
     scrollToBottom: () => {
