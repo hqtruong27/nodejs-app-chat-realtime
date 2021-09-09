@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 
-const model = mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-    }
-})
+// const model = mongoose.Schema({
+//     name: {
+//         type: String,
+//         required: true,
+//     }
+// })
 
-module.exports = new mongoose.model("Group", model)
+// module.exports = new mongoose.model("Group", model)
