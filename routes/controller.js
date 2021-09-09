@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const UserGroup = require('../model/userGroup')
+const { User, Group } = require('../model/user_group')
 
 /**
  * Home page: loading all product
@@ -9,11 +9,11 @@ router.get('/group?:userId', async (req, res) => {
     try {
         //const newChat = new Chat({ groupId: groupId, message_sender: userId, message: { text: 'hah hah...' } })
         //const rs = await newChat.save()
-        const result = await Groups.find({})
-
+        //const e = await Group.create({ users: '6139178df09f69749ff805a1', name: "Group 2" })
+        const result = await Group.find({ users: req.query.userId }).populate('users')
         console.log(result)
 
-        return res.send(result)
+        return res.status(200).json(result)
     } catch (error) {
         console.log(error)
         return res.status(500).json({ code: 500, message: error.message })
