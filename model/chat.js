@@ -6,9 +6,10 @@ const conversation = new Schema({
         required: true,
     },
     creator: {
-        type: Schema.Types.ObjectId,
+        type: Object,
         required: false,
-    }
+    },
+    members: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 })
 
 const message = new Schema({
@@ -28,7 +29,8 @@ const message = new Schema({
     timestamp_precise: {
         type: Date,
         default: Date.now()
-    }
+    },
+    conversation: { type: Schema.Types.ObjectId, ref: 'Conversation' }
 })
 
 module.exports.Conversation = new model('Conversation', conversation)
