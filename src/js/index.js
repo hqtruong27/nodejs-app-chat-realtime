@@ -10,6 +10,21 @@ const ChatClient = {
         ChatClient.connect()
         ChatClient.user()
     },
+    verify: () => {
+        const socket = io({ auth: { token: ACCESS_TOKEN } })
+        socket.on('user-info', (res) => {
+            res.user
+        })
+
+        socket.on("connect_error", (err) => {
+            console.log(err instanceof Error); // true
+            console.log(err.data);
+            console.log(err.message);
+            socket.disconnect()
+            location.href = '/login.html'
+        })
+    },
+
     connect: () => {
         let socket = io({ auth: { token: ACCESS_TOKEN } })
         socket.on('user-info', (res) => {
@@ -27,6 +42,7 @@ const ChatClient = {
 
         ChatClient.socket(socket)
         ChatClient.event(socket)
+        ChatClient.handleClick(socket)
     },
     user: async () => {
         try {
@@ -42,7 +58,7 @@ const ChatClient = {
             }
 
             const user = await response.json()
-            console.log(user)
+
             ChatClient.getGroups(user)
         } catch (error) {
             console.log(error)
@@ -51,6 +67,8 @@ const ChatClient = {
 
     socket: (socket) => {
         const chatArea = document.querySelector('.chat-area-main')
+        const msg__message = document.querySelector('.msg-message')
+        const msg_date = document.querySelector('.msg-date')
         socket.on('user-chat', (res) => {
             if (socket.id !== res.message_sender) {
                 typing.textContent = ''
@@ -69,6 +87,11 @@ const ChatClient = {
                                 <div class="chat-msg-text">${res.message}</div>
                             </div>
                         </div>`
+
+            //print msg, and date send in left bar
+            msg__message.textContent = res.message;
+            msg_date.textContent = res.timestamp_precise
+            console.log(res)
 
             const node = document.createElement('message')
             node.innerHTML = str
@@ -119,7 +142,10 @@ const ChatClient = {
     },
 
     getGroups: async (user) => {
-        const result = await axios.get(`/api/group?userId=${user._id}`)
+        const url = window.location.href
+        const path = window.location.pathname
+        console.log(path)
+        const result = await axios.get(`/api/conversation?userId=${user._id}`)
         let html = ``
         for (const group of await result.data) {
             html += `<div class="msg active" id="${group._id}">
@@ -149,9 +175,62 @@ const ChatClient = {
         wrapper.appendChild(node, wrapper.firstChild)
     },
 
+    handleClick: (socket) => {
+        const chatArea = document.querySelector('.chat-area-main')
+
+        const chat = document.querySelector('.conversation-area')
+        chat.addEventListener('click', async (e) => {
+
+            const href = e.target.id
+            console.log(href)
+            if (href) {
+                history.pushState('', '', "?groupId=" + href)
+            }
+
+            const element = chat.querySelectorAll('.msg.active')
+            if (element != null) {
+                element.forEach(x => x.classList.remove('active'))
+            }
+
+            e.target.classList.add('active')
+            while (chatArea.firstChild) {
+                chatArea.removeChild(chatArea.firstChild)
+            }
+
+            const entityId = e.target.id
+            if (entityId === '') {
+                return
+            }
+
+            const response = await ChatClient.getMessages(entityId)
+
+            for (const data of response.data) {
+                console.log(data)
+                const isOwner = socket.user._id == data.message_sender.user?._id ? 'owner' : ''
+                const str = `<div class="chat-msg ${isOwner}">
+                            <div class="chat-msg-profile">
+                                <img class="chat-msg-img"
+                                    src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%2812%29.png"
+                                    alt="" />
+                                <div class="chat-msg-date">${data.message_sender.user?.name} - Message seen 2.50pm</div>
+                            </div>
+                            <div class="chat-msg-content">
+                                <div class="chat-msg-text">${data.message.text}</div>
+                            </div>
+                        </div>`
+
+                const node = document.createElement('message')
+                node.innerHTML = str
+                chatArea.appendChild(node.firstChild)
+            }
+        })
+    },
+
+    getMessages: async (conversationId) => await axios.get(`api/messages?conversationId=${conversationId}`),
+
     scrollToBottom: () => {
         chatForm.scrollTop = chatForm.scrollHeight
-        //window.scrollTo(0, document.body.scrollHeight); this worked
+        //window.scrollTo(0, document.body.scrollHeight); this still worked
     }
 }
 
