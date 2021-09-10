@@ -1,15 +1,19 @@
-const mongoose = require('mongoose')
+const { model, Schema } = require('mongoose')
 
-const schema = mongoose.Schema({
-    groupId: {
+const conversation = new Schema({
+    name: {
         type: String,
-        require: false,
+        required: true,
     },
+    creator: {
+        type: Schema.Types.ObjectId,
+        required: false,
+    }
+})
+
+const message = new Schema({
     message_sender: {
-        id: {
-            type: String,
-            require: true,
-        }
+        user: { type: Schema.Types.ObjectId, ref: 'User' }
     },
     message: {
         text: {
@@ -20,11 +24,12 @@ const schema = mongoose.Schema({
             type: Object,
             require: false
         },
-        timestamp_precise: {
-            type: Date,
-            default: Date.now()
-        }
+    },
+    timestamp_precise: {
+        type: Date,
+        default: Date.now()
     }
 })
 
-module.exports = mongoose.model('Chat', schema)
+module.exports.Conversation = new model('Conversation', conversation)
+module.exports.Message = new model('Message', message)
