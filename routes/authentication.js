@@ -6,7 +6,7 @@ const { User } = require('../model/user_group')
 const jwt = require('jsonwebtoken')
 
 //middleware
-const middleware = require('../middleware/middleware')
+const { verify } = require('../middleware/middleware')
 
 const rounds = 9
 const SECRET_KEY = process.env.SECRET_KEY || 'my secret key'
@@ -63,9 +63,9 @@ router.post('/signup', async (req, res) => {
     }
 })
 
-const generateToken = (user) => jwt.sign({ data: user }, SECRET_KEY, { expiresIn: '10m' })
+const generateToken = (user) => jwt.sign({ data: user }, SECRET_KEY, { expiresIn: '1d' })
 
-router.get('/checkToken', middleware.verify, async (req, res, next) => {
+router.get('/checkToken', verify, async (req, res, next) => {
     return res.status(200).json()
 })
 
