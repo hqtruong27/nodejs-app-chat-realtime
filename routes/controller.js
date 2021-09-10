@@ -1,16 +1,16 @@
 const express = require('express')
 const router = express.Router()
-const { User, Group } = require('../model/user_group')
-
+const { User } = require('../model/user')
+const { Conversation, Message } = require('../model/chat')
+const ObjectId = require('mongoose').Types.ObjectId
 /**
  * Home page: loading all product
  */
-router.get('/group?:userId', async (req, res) => {
+router.get('/conversation?:userId', async (req, res) => {
     try {
-        //const newChat = new Chat({ groupId: groupId, message_sender: userId, message: { text: 'hah hah...' } })
-        //const rs = await newChat.save()
-        //const e = await Group.create({ users: '6139178df09f69749ff805a1', name: "Group 2" })
-        const result = await Group.find({ users: req.query.userId }).populate('users')
+        //const message = await Message.create({ message_sender: { user: req.query.userId }, message: { text: 'What?' }, conversation: '613b079f99395dfbda6dc3d7' })
+        const result = await Conversation.find({ users: req.query.userId }).populate('members')
+
         console.log(result)
 
         return res.status(200).json(result)
@@ -20,12 +20,10 @@ router.get('/group?:userId', async (req, res) => {
     }
 })
 
-router.get('/chat?:groupId', async (req, res) => {
-    const _context = await dbConnection()
-    const userId = '613595dedaa1681a4456b677'
-    const query = { groupId: req.query.groupId }
-
-    let result = await _context.collection('Chats').find(query).sort({ timestamp_precise: 1 }).toArray()
+router.get('/messages?:conversationId', async (req, res) => {
+    const conversationId = req.query.conversationId
+    const isValid = ObjectId.isValid(conversationId)
+    let result = await Message.find({ conversation: isValid ? conversationId : null }).populate('message_sender.user')
 
     return res.send(result)
 })
